@@ -1,19 +1,14 @@
-
 import java.io.*;
 import java.util.*;
 import java.util.HashMap;
 
-
+/**
+ * @author nidadinc
+ * @since 23.02.2021
+ */
 public class NgramExtractor {
 
-    public static String scanned;
-    public static String[] splitarray;
-    public static String textfile;
-    public static String outputfile ;
-    public static String gramSize;
-
     public static void main(String[] args) {
-
 
         try {
             if (args.length != 3) {
@@ -24,35 +19,41 @@ public class NgramExtractor {
                     System.out.println("Birden fazla parametre girildi");
                 return;
             }
-            textfile = args[0];
-            outputfile = args[1];
-            gramSize = args[2];
-            File file = new File(textfile);
-            BufferedReader buffread = new BufferedReader(new FileReader(file));
-            String readline = "";
 
-            while ((readline = buffread.readLine()) != null) {
-                scanned = readline.replaceAll("[[-+^,?]*]", "");
-                splitarray = scanned.toLowerCase().split(" ");
-            }
-
-
-
-                uniGram();
-
-
-
+            Grams gram = new Grams(args[0], args[1], args[2]);
+            gram.readFile();
+            gram.uniGram();
 
         } catch (IOException e) {
             e.printStackTrace();
-
-
-
         }
-
-
     }
-    public static void uniGram() throws IOException {
+}
+
+class Grams{
+    public  String scanned;
+    public  String[] splitarray;
+    public  String textfile;
+    public  String outputfile ;
+    public  String gramSize;
+
+    public Grams(String textfile, String outputfile, String gramSize) {
+        this.textfile = textfile;
+        this.outputfile = outputfile;
+        this.gramSize = gramSize;
+    }
+
+    public void readFile() throws IOException {
+        File file = new File(textfile);
+        BufferedReader buffread = new BufferedReader(new FileReader(file));
+        String readline = "";
+
+        while ((readline = buffread.readLine()) != null) {
+            scanned = readline.replaceAll("[[-+^,?]*]", "");
+            splitarray = scanned.toLowerCase().split(" ");
+        }
+    }
+    public void uniGram() throws IOException {
 
         HashMap<String, Integer> ngrams = new HashMap<String, Integer>();
         for (String str : splitarray) {
@@ -71,11 +72,7 @@ public class NgramExtractor {
             j++;
         }
 
-
         double numOfTokens = new StringTokenizer(scanned, " ").countTokens();
-
-
-       
 
         FileWriter csvWriter = new FileWriter(outputfile);
         csvWriter.append("Total number of tokens: " + (int)numOfTokens);
@@ -87,21 +84,17 @@ public class NgramExtractor {
         csvWriter.append("frequency");
         csvWriter.append("\n");
 
-
         for (String i : ngrams.keySet()) {
             int j = 0;
             csvWriter.append(  i + "," + ngrams.get(i) + "," + frequencyList.get(i) / numOfTokens);
             csvWriter.append("\n");
             j += 1;
         }
-
-
         csvWriter.flush();
         csvWriter.close();
-
     }
 
-    public static void biGram() throws IOException {
+    public void biGram() throws IOException {
 
         HashMap<String, Integer> ngrams = new HashMap<String, Integer>();
         for (String str : splitarray) {
@@ -121,13 +114,10 @@ public class NgramExtractor {
             j++;
         }
 
-
         double numOfTokens = new StringTokenizer(scanned, " ").countTokens();
-
 
         System.out.println(frequencyList.toString());
         System.out.println("Total number of tokens: " + (int)numOfTokens);
-
 
         for (String i : ngrams.keySet()) {
             int j = 0;
@@ -145,7 +135,6 @@ public class NgramExtractor {
         csvWriter.append("frequency");
         csvWriter.append("\n");
 
-
         for (String i : ngrams.keySet()) {
             int j = 0;
             csvWriter.append(  i + "," + ngrams.get(i) + "," + frequencyList.get(i) / numOfTokens);
@@ -153,17 +142,12 @@ public class NgramExtractor {
             j += 1;
         }
 
-
         csvWriter.flush();
         csvWriter.close();
 
     }
+
 }
-
-
-
-
-
 
 
 
